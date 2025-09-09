@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -44,7 +45,7 @@
       <div class="row">
         <button id="btnClassify">Clasificar</button>
         <button id="btnClearPaste" class="warn">Borrar</button>
-        <input id="fileInput" type="file" accept=".csv,.xlsx,.xls" />
+        <!-- <input id="fileInput" type="file" accept=".csv,.xlsx,.xls" /> -->
       </div>
     </div>
     <textarea id="pasteArea" placeholder="Pega aquí CSV con encabezados (Nombre,Género/Sexo,Edad,Embarazada,Migrante,Cantidad)."></textarea>
@@ -66,7 +67,7 @@
 
 <script>
 (function(){
-  const fileInput = document.getElementById('fileInput');
+  // const fileInput = document.getElementById('fileInput'); // ELIMINADO
   const pasteArea = document.getElementById('pasteArea');
   const btnClassify = document.getElementById('btnClassify');
   const btnClearPaste = document.getElementById('btnClearPaste');
@@ -122,32 +123,17 @@
     tableWrap.innerHTML = "";
     downloadWrap.style.display = 'none';
     meta.textContent = "";
-    fileInput.value = "";
+    // if (fileInput) fileInput.value = ""; // ELIMINADO
   });
 
   btnClassify.addEventListener('click', async ()=>{
     let rows = [];
-    if (fileInput.files.length){
-      const f = fileInput.files[0];
-      const ext = f.name.split('.').pop().toLowerCase();
-      meta.textContent = `Fuente: ${f.name}`;
-      if (ext==='csv'){
-        await new Promise((resolve,reject)=>{
-          Papa.parse(f, {header:true, skipEmptyLines:true,
-            complete: res=>{ rows = res.data; resolve(); }, error:reject});
-        });
-      } else {
-        const buf = await f.arrayBuffer();
-        const wb = XLSX.read(buf, {type:'array'});
-        const ws = wb.Sheets[wb.SheetNames[0]];
-        rows = XLSX.utils.sheet_to_json(ws, {defval:''});
-      }
-    } else {
-      const text = pasteArea.value.trim();
-      const res = Papa.parse(text, {header:true, skipEmptyLines:true});
-      rows = res.data;
-      meta.textContent = `Fuente: Pegado manual (${rows.length} filas)`;
-    }
+    // if (fileInput && fileInput.files.length){ ... } // ELIMINADO
+    // Solo se permite el pegado manual
+    const text = pasteArea.value.trim();
+    const res = Papa.parse(text, {header:true, skipEmptyLines:true});
+    rows = res.data;
+    meta.textContent = `Fuente: Pegado manual (${rows.length} filas)`;
 
     rows = rows.map(r=>{
       const o={};
@@ -241,3 +227,4 @@
 </script>
 </body>
 </html>
+```
